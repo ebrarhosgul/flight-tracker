@@ -1,26 +1,117 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+  --bg-color: #09090b;
+  --font-inter: 'Inter', sans-serif;
+  --font-mono: 'JetBrains Mono', monospace;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  background-color: var(--bg-color);
+  font-family: var(--font-inter);
+  overflow-x: hidden;
+}
+
+@utility bg-grid-pattern {
+  background-size: 40px 40px;
+  background-image:
+    linear-gradient(to right, rgba(255, 255, 255, 0.05) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(255, 255, 255, 0.05) 1px, transparent 1px);
+  mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+  -webkit-mask-image: radial-gradient(circle at center, black 40%, transparent 100%);
+}
+
+.layout-container {
+  @apply relative min-h-screen flex flex-col items-center justify-center p-6 bg-[#09090b] overflow-hidden;
+}
+
+.bg-layer-grid {
+  @apply absolute inset-0 bg-grid-pattern opacity-40 pointer-events-none;
+}
+
+.ambient-glow {
+  @apply absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2 w-[800px] h-[400px] bg-sky-900/20 blur-[120px] rounded-full pointer-events-none;
+}
+
+.content-wrapper {
+  @apply relative z-10 w-full max-w-4xl mx-auto text-center space-y-10;
+}
+
+.status-badge {
+  @apply inline-flex items-center gap-2 px-3 py-1 rounded-full bg-zinc-900 border border-zinc-800 text-xs text-sky-400 font-mono mb-4;
+}
+
+.status-dot-wrapper {
+  @apply relative flex h-2 w-2;
+}
+
+.status-dot-ping {
+  @apply animate-ping absolute inline-flex h-full w-full rounded-full bg-sky-400 opacity-75;
+}
+
+.status-dot-core {
+  @apply relative inline-flex rounded-full h-2 w-2 bg-sky-500;
+}
+
+.hero-heading {
+  @apply text-5xl md:text-7xl font-bold tracking-tight text-white space-y-2;
+}
+
+.text-gradient-white {
+  @apply text-transparent bg-clip-text bg-linear-to-b from-white to-zinc-500;
+}
+
+.text-gradient-blue {
+  @apply text-transparent bg-clip-text bg-linear-to-br from-sky-400 to-blue-600;
+}
+
+.hero-description {
+  @apply text-lg text-zinc-400 font-light max-w-xl mx-auto leading-relaxed;
+}
+
+.stats-container {
+  @apply grid grid-cols-2 md:grid-cols-4 gap-4 pt-12 mt-12 opacity-60;
+}
+
+.stat-item {
+  @apply text-center;
+}
+
+.stat-value {
+  @apply text-2xl font-mono font-bold text-white;
+}
+
+.stat-label {
+  @apply text-xs text-zinc-500 uppercase tracking-widest;
+}
+
+.app-footer {
+  @apply absolute bottom-6 w-full text-center;
+}
+
+.footer-text {
+  @apply text-xs font-mono text-zinc-600 tracking-wider;
+}
+
+.footer-name {
+  @apply text-zinc-400 font-bold;
+}
+
+.search-wrapper {
+  @apply w-full max-w-md mx-auto relative;
+}
+.search-form {
+  @apply relative flex items-center;
+}
+.search-input {
+  @apply w-full h-14 pl-5 pr-14 text-base bg-zinc-900 border border-zinc-800 rounded-lg text-white placeholder-zinc-500 font-mono transition-colors duration-200 focus:outline-none focus:border-sky-500 focus:ring-1 focus:ring-sky-500;
+}
+.search-input.has-error {
+  @apply border-red-900 focus:border-red-500 focus:ring-red-500 text-red-100;
+}
+.search-btn {
+  @apply absolute right-2 p-2.5 text-zinc-400 rounded-md transition-colors hover:text-white hover:bg-zinc-800 disabled:opacity-50 disabled:cursor-not-allowed;
+}
+.error-badge {
+  @apply absolute -bottom-8 left-0 text-xs text-red-400 flex items-center gap-1.5 font-medium;
 }
