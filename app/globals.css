@@ -12,6 +12,15 @@ body {
   overflow-x: hidden;
 }
 
+@utility animate-float {
+  animation: tech-float 4s ease-in-out infinite;
+  will-change: transform;
+}
+
+@utility animate-breathe {
+  animation: soft-pulse 3s ease-in-out infinite;
+}
+
 @utility bg-grid-pattern {
   background-size: 40px 40px;
   background-image:
@@ -86,7 +95,7 @@ body {
 }
 
 .app-footer {
-  @apply absolute bottom-6 w-full text-center;
+  @apply absolute bottom-6 w-full text-center max-sm:static max-sm:mb-5;
 }
 
 .footer-text {
@@ -114,4 +123,89 @@ body {
 }
 .error-badge {
   @apply absolute -bottom-8 left-0 text-xs text-red-400 flex items-center gap-1.5 font-medium;
+}
+
+.dashboard-card {
+  @apply w-full max-w-5xl bg-[#121214] border border-zinc-800 rounded-3xl relative overflow-hidden transition-all duration-300 p-5 md:p-12 mt-20 md:mt-0;
+}
+
+.airport-code {
+  @apply font-mono font-bold text-white tracking-tighter leading-none text-4xl md:text-6xl;
+}
+
+.airport-city {
+  @apply font-medium text-sky-500 block mt-1 text-base md:text-lg;
+}
+
+.airport-name {
+  @apply text-zinc-500 uppercase tracking-wider truncate block mt-1 text-[10px] md:text-xs max-w-[180px];
+}
+
+.flight-icon-container {
+  @apply relative flex items-center justify-center my-10 md:my-0 max-md:flex-col-reverse max-md:gap-5;
+}
+
+.status-badge-pill {
+  @apply absolute -top-10 left-1/2 -translate-x-1/2
+    px-3 py-1 bg-zinc-900/90 rounded-full border border-zinc-800 backdrop-blur-md
+    text-[9px] text-zinc-400 font-mono tracking-widest uppercase whitespace-nowrap
+    z-10 shadow-lg max-md:static max-md:translate-x-0;
+}
+
+.flight-icon-circle {
+  @apply bg-zinc-900/50 rounded-full border border-zinc-800 animate-float flex items-center justify-center relative z-0 p-5 md:p-6;
+}
+
+.stat-grid {
+  @apply grid gap-3 md:gap-6 grid-cols-2 md:grid-cols-4;
+}
+
+.stat-card {
+  @apply p-4 bg-zinc-900/30 border border-zinc-800 rounded-xl transition-colors flex flex-col justify-center h-full min-h-[80px];
+}
+
+.stat-card.wide {
+  @apply col-span-2;
+}
+
+.stat-card.row-layout {
+  @apply flex-row items-center justify-between;
+}
+
+.stat-label {
+  @apply text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-widest mb-1.5 block;
+}
+
+.stat-value {
+  @apply font-mono font-medium text-white truncate text-lg md:text-xl;
+}
+
+.text-climb {
+  @apply text-emerald-500;
+}
+.text-descend {
+  @apply text-amber-500;
+}
+.text-level {
+  @apply text-zinc-400;
+}
+
+@keyframes tech-float {
+  0%,
+  100% {
+    transform: translate3d(0, 0, 0);
+  }
+  50% {
+    transform: translate3d(0, -8px, 0);
+  }
+}
+
+@keyframes soft-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.7;
+  }
 }

@@ -23,9 +23,32 @@ export interface FlightData {
   status: string;
 }
 
-// İleride API response'u için genel bir tip de lazım olabilir
 export interface ApiResponse {
   source: 'mock' | 'live';
   data: FlightData[];
   error?: string;
+}
+
+export interface PageProps {
+  params: Promise<{ code: string }>;
+}
+
+export interface AirportDetail {
+  name: string;
+  city: string;
+  country: string;
+}
+
+export interface AirportResponse {
+  name: string;
+  municipality: string;
+  iso_country: string;
+  iata_code: string;
+  icao_code: string;
+}
+
+export interface StatBoxProps {
+  label: string;
+  children: React.ReactNode;
+  className?: string;
 }
