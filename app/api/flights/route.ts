@@ -1,4 +1,3 @@
-// src/app/api/flights/route.ts
 import { NextResponse } from 'next/server';
 import { MOCK_FLIGHTS } from '@/mocks/flights';
 
@@ -17,7 +16,6 @@ export async function GET(request: Request) {
   const API_KEY = process.env.AIRLABS_API_KEY;
   const IS_MOCK = process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true';
 
-  // --- MOCK MODE ---
   if (IS_MOCK) {
     await new Promise((resolve) => setTimeout(resolve, 600));
 
@@ -34,7 +32,6 @@ export async function GET(request: Request) {
     return NextResponse.json({ source: 'mock', data: MOCK_FLIGHTS });
   }
 
-  // --- LIVE MODE ---
   if (!API_KEY) {
     return NextResponse.json({ error: 'Server Configuration Error: API Key missing' }, { status: 500 });
   }

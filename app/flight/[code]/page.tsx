@@ -21,7 +21,7 @@ export default async function FlightPage({ params }: PageProps) {
   ]);
 
   return (
-    <main className="min-h-screen bg-[#09090b]">
+    <main className="h-full bg-[#09090b]">
       <FlightDashboard initialData={flight} departure={departureAirport} arrival={arrivalAirport} />
     </main>
   );

@@ -3,15 +3,7 @@ import { MOCK_AIRPORTS } from '@/mocks/airports';
 
 export async function getAirportDetails(icaoCode: string): Promise<AirportResponse | null> {
   if (process.env.NEXT_PUBLIC_USE_MOCK_DATA === 'true') {
-    return (
-      MOCK_AIRPORTS[icaoCode] || {
-        name: 'Unknown Airport',
-        municipality: 'Unknown City',
-        iso_country: '--',
-        iata_code: 'N/A',
-        icao_code: icaoCode,
-      }
-    );
+    return MOCK_AIRPORTS[icaoCode] || null;
   }
 
   const apiToken = process.env.AIRPORTDB_TOKEN;
@@ -32,6 +24,8 @@ export async function getAirportDetails(icaoCode: string): Promise<AirportRespon
       iso_country: data.iso_country,
       iata_code: data.iata_code,
       icao_code: data.icao_code,
+      latitude_deg: data.latitude_deg,
+      longitude_deg: data.longitude_deg,
     };
   } catch (error) {
     console.error('Airport API Error:', error);

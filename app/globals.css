@@ -7,9 +7,13 @@
 }
 
 body {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
   background-color: var(--bg-color);
   font-family: var(--font-inter);
   overflow-x: hidden;
+  min-height: 100dvh;
 }
 
 @utility animate-float {
@@ -95,7 +99,7 @@ body {
 }
 
 .app-footer {
-  @apply absolute bottom-6 w-full text-center max-sm:static max-sm:mb-5;
+  @apply w-full sm:min-h-7 text-center static my-5 py-3;
 }
 
 .footer-text {

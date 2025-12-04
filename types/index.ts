@@ -45,10 +45,24 @@ export interface AirportResponse {
   iso_country: string;
   iata_code: string;
   icao_code: string;
+  latitude_deg: number;
+  longitude_deg: number;
 }
 
 export interface StatBoxProps {
   label: string;
   children: React.ReactNode;
   className?: string;
+}
+
+export interface FlightMapProps {
+  lat: number;
+  lng: number;
+  dir: number;
+  flightCode: string;
+  v_speed: number;
+  alt: number;
+  speed: number;
+  departure?: AirportResponse | null;
+  arrival?: AirportResponse | null;
 }

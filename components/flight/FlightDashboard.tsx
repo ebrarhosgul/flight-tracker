@@ -12,12 +12,22 @@ import {
   ArrowDownRight,
   ArrowRight,
 } from 'lucide-react';
+import dynamic from 'next/dynamic';
 
 interface Props {
   initialData: FlightData;
   departure: AirportResponse | null;
   arrival: AirportResponse | null;
 }
+
+const FlightMap = dynamic(() => import('@/components/map/FlightMap'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-full flex items-center justify-center bg-zinc-900/50 text-zinc-600 font-mono text-sm animate-pulse">
+      LOADING MAP DATA...
+    </div>
+  ),
+});
 
 export default function FlightDashboard({ initialData, departure, arrival }: Props) {
   const getFlightStatus = () => {
@@ -31,8 +41,8 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
   const status = getFlightStatus();
 
   return (
-    <div className="relative w-full min-h-screen flex flex-col bg-[#09090b] overflow-y-auto">
-      <header className="absolute top-0 left-0 w-full z-50 p-4 md:p-6 flex justify-between items-start pointer-events-none">
+    <div className="relative w-full h-full flex flex-col bg-[#09090b] overflow-y-auto">
+      <header className="w-full p-4 md:p-6 flex justify-between items-start pointer-events-none">
         <Link
           href="/"
           className="pointer-events-auto flex items-center gap-2 px-3 py-2 md:px-4 bg-zinc-900/80 border border-white/10 rounded-full text-white hover:bg-zinc-800 transition-all font-medium"
@@ -48,7 +58,7 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
       </header>
 
       <div className="flex-1 flex items-center justify-center p-4 z-10 md:py-0">
-        <div className="dashboard-card">
+        <div className="dashboard-card group">
           <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-zinc-700 to-transparent opacity-50" />
 
           <div className="flex flex-col md:flex-row items-center justify-between md:gap-12 text-center md:text-left mb-8 md:mb-12">
@@ -110,7 +120,7 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
               <span className="stat-value">{initialData.aircraft_icao || 'Unknown Type'}</span>
             </StatBox>
 
-            <StatBox label="GPS Coordinates" className="wide row-layout">
+            {/* <StatBox label="GPS Coordinates" className="wide row-layout">
               <div>
                 <span className="stat-label">Live Location</span>
                 <span className="stat-value text-sky-500 text-sm md:text-base">
@@ -118,7 +128,33 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
                 </span>
               </div>
               <MapIcon className="w-5 h-5 text-zinc-600 shrink-0 ml-2" />
-            </StatBox>
+            </StatBox> */}
+          </div>
+
+          <div className="w-full h-72 md:h-96 rounded-3xl overflow-hidden border border-zinc-800 relative shadow-2xl mt-8">
+            <div className="absolute top-4 left-4 z-1 bg-[#121214]/80 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 pointer-events-none flex flex-col gap-1">
+              <div className="flex items-center gap-2">
+                <span
+                  className={`w-2 h-2 rounded-full animate-pulse ${status.text === 'CLIMBING' ? 'bg-emerald-500' : status.text === 'DESCENDING' ? 'bg-amber-500' : 'bg-sky-500'}`}
+                ></span>
+                <span className="text-[10px] text-zinc-300 font-mono tracking-widest uppercase">Live Route</span>
+              </div>
+              <span className="text-xs text-white font-medium">
+                {departure?.iata_code || '???'} <span className="text-zinc-500">→</span> {arrival?.iata_code || '???'}
+              </span>
+            </div>
+
+            <FlightMap
+              lat={initialData.lat}
+              lng={initialData.lng}
+              dir={initialData.dir}
+              flightCode={initialData.flight_iata}
+              v_speed={initialData.v_speed}
+              alt={initialData.alt}
+              speed={initialData.speed}
+              departure={departure}
+              arrival={arrival}
+            />
           </div>
         </div>
       </div>
