@@ -16,15 +16,6 @@ body {
   min-height: 100dvh;
 }
 
-@utility animate-float {
-  animation: tech-float 4s ease-in-out infinite;
-  will-change: transform;
-}
-
-@utility animate-breathe {
-  animation: soft-pulse 3s ease-in-out infinite;
-}
-
 @utility bg-grid-pattern {
   background-size: 40px 40px;
   background-image:
@@ -157,7 +148,7 @@ body {
 }
 
 .flight-icon-circle {
-  @apply bg-zinc-900/50 rounded-full border border-zinc-800 animate-float flex items-center justify-center relative z-0 p-5 md:p-6;
+  @apply bg-zinc-900/50 rounded-full border border-zinc-800 flex items-center justify-center relative z-0 p-5 md:p-6;
 }
 
 .stat-grid {
@@ -194,22 +185,149 @@ body {
   @apply text-zinc-400;
 }
 
-@keyframes tech-float {
-  0%,
-  100% {
-    transform: translate3d(0, 0, 0);
-  }
-  50% {
-    transform: translate3d(0, -8px, 0);
-  }
+.flight-page-main {
+  @apply relative w-full min-h-screen bg-[#09090b] overflow-hidden flex flex-col;
 }
 
-@keyframes soft-pulse {
-  0%,
-  100% {
-    opacity: 1;
-  }
-  50% {
-    opacity: 0.7;
-  }
+.tech-grid-overlay {
+  @apply absolute inset-0 pointer-events-none;
+  z-index: 1;
+  background-size: 60px 60px;
+  background-image:
+    linear-gradient(to right, rgba(14, 165, 233, 0.07) 1px, transparent 1px),
+    linear-gradient(to bottom, rgba(14, 165, 233, 0.07) 1px, transparent 1px);
+  mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+  -webkit-mask-image: radial-gradient(ellipse at center, black 40%, transparent 80%);
+}
+
+.dashboard-header {
+  @apply w-full z-50 p-4 md:p-6 flex justify-between items-start pointer-events-none;
+}
+
+.btn-back {
+  @apply pointer-events-auto flex items-center gap-2 px-3 py-2 md:px-4 bg-zinc-900/80 border border-white/10 rounded-full text-white hover:bg-zinc-800 transition-all font-medium text-xs md:text-sm;
+}
+
+.badge-live {
+  @apply pointer-events-auto px-3 py-2 md:px-4 bg-emerald-950/30 border border-emerald-500/20 rounded-full text-emerald-500 font-mono flex items-center gap-2 text-[10px] md:text-xs;
+}
+
+.dashboard-content {
+  @apply flex-1 flex items-center justify-center p-4 z-10 py-24 md:py-0;
+}
+
+.map-wrapper {
+  @apply w-full h-72 md:h-96 rounded-3xl overflow-hidden border border-zinc-800 relative shadow-2xl mt-8 bg-[#121214];
+}
+
+.map-overlay-info {
+  @apply absolute top-4 left-4 z-[1000] bg-[#121214]/80 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 pointer-events-none flex flex-col gap-1;
+}
+
+.chart-wrapper {
+  @apply w-full mt-6 rounded-3xl overflow-hidden border border-zinc-800 bg-[#121214] shadow-xl;
+}
+
+.loading-placeholder {
+  @apply w-full h-full flex items-center justify-center bg-zinc-900/50 text-zinc-600 font-mono text-sm;
+}
+
+.map-container-wrapper {
+  @apply relative w-full h-full;
+}
+
+.map-legend-box {
+  @apply absolute top-4 left-4 z-[1000] bg-[#121214]/90 backdrop-blur-md px-4 py-3 rounded-xl border border-zinc-800 shadow-xl pointer-events-none flex flex-col gap-2 min-w-[140px];
+}
+
+.map-legend-header {
+  @apply flex items-center justify-between border-b border-white/5 pb-2 mb-1 gap-2;
+}
+
+.map-legend-title {
+  @apply text-[10px] text-zinc-400 font-mono tracking-widest uppercase;
+}
+
+.legend-route-indicator {
+  @apply flex items-center gap-1;
+}
+
+.dot-emerald {
+  @apply w-1.5 h-1.5 rounded-full bg-emerald-500;
+}
+
+.line-dashed {
+  @apply w-6 h-0.5 border-t-2 border-dashed border-sky-500/50;
+}
+
+.dot-red {
+  @apply w-1.5 h-1.5 rounded-full bg-red-500;
+}
+
+.map-route-details {
+  @apply flex items-center justify-between gap-4 font-mono text-xs;
+}
+
+.route-text-label {
+  @apply text-[9px] text-zinc-500 block;
+}
+
+.route-text-code-dep {
+  @apply text-emerald-500 font-bold;
+}
+
+.route-text-code-arr {
+  @apply text-red-500 font-bold;
+}
+
+.plane-icon-legend {
+  @apply text-zinc-600 -rotate-90 scale-[1.5];
+}
+
+.telemetry-container {
+  @apply w-full h-full p-4 md:p-6 bg-[#121214];
+}
+
+.telemetry-header {
+  @apply flex items-center justify-between mb-4;
+}
+
+.telemetry-title-wrapper {
+  @apply flex items-center gap-2;
+}
+
+.live-indicator-box {
+  @apply relative flex h-2 w-2;
+}
+
+.live-ping-effect {
+  @apply animate-ping absolute inline-flex h-full w-full rounded-full bg-emerald-400 opacity-75;
+}
+
+.live-dot-static {
+  @apply relative inline-flex rounded-full h-2 w-2 bg-emerald-500;
+}
+
+.telemetry-title-text {
+  @apply text-xs font-mono text-zinc-400 uppercase tracking-widest;
+}
+
+.telemetry-legend-wrapper {
+  @apply flex items-center gap-2;
+}
+
+.legend-dot-indicator {
+  @apply w-2 h-2 rounded-full border border-sky-500 bg-sky-500/20;
+}
+
+.legend-label-text {
+  @apply text-[10px] font-mono text-zinc-400 uppercase;
+}
+
+.telemetry-chart-area {
+  @apply w-full h-[200px] select-none;
+}
+
+.recharts-wrapper *:focus {
+  outline: none !important;
 }

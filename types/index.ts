@@ -66,3 +66,8 @@ export interface FlightMapProps {
   departure?: AirportResponse | null;
   arrival?: AirportResponse | null;
 }
+
+export interface ChartPoint {
+  time: string;
+  alt: number;
+}

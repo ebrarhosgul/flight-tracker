@@ -13,6 +13,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import TelemetryChart from '@/components/flight/TelemetryChart';
 
 interface Props {
   initialData: FlightData;
@@ -22,42 +23,53 @@ interface Props {
 
 const FlightMap = dynamic(() => import('@/components/map/FlightMap'), {
   ssr: false,
-  loading: () => (
-    <div className="w-full h-full flex items-center justify-center bg-zinc-900/50 text-zinc-600 font-mono text-sm animate-pulse">
-      LOADING MAP DATA...
-    </div>
-  ),
+  loading: () => <div className="loading-placeholder">LOADING MAP DATA...</div>,
 });
 
 export default function FlightDashboard({ initialData, departure, arrival }: Props) {
   const getFlightStatus = () => {
     const vs = initialData.v_speed;
-    if (vs > 50) return { icon: <PlaneTakeoff className="w-6 h-6 md:w-8 md:h-8 text-emerald-400" />, text: 'CLIMBING' };
-    if (vs < -50)
-      return { icon: <PlaneLanding className="w-6 h-6 md:w-8 md:h-8 text-amber-400" />, text: 'DESCENDING' };
-    return { icon: <Plane className="w-6 h-6 md:w-8 md:h-8 text-sky-400" />, text: 'CRUISING' };
+
+    if (vs > 50) {
+      return {
+        icon: <PlaneTakeoff className="w-6 h-6 md:w-8 md:h-8 text-emerald-400" />,
+        text: 'CLIMBING',
+        dotColor: 'bg-emerald-500',
+      };
+    }
+
+    if (vs < -50) {
+      return {
+        icon: <PlaneLanding className="w-6 h-6 md:w-8 md:h-8 text-amber-400" />,
+        text: 'DESCENDING',
+        dotColor: 'bg-amber-500',
+      };
+    }
+
+    return {
+      icon: <Plane className="w-6 h-6 md:w-8 md:h-8 text-sky-400" />,
+      text: 'CRUISING',
+      dotColor: 'bg-sky-500',
+    };
   };
 
   const status = getFlightStatus();
 
   return (
-    <div className="relative w-full h-full flex flex-col bg-[#09090b] overflow-y-auto">
-      <header className="w-full p-4 md:p-6 flex justify-between items-start pointer-events-none">
-        <Link
-          href="/"
-          className="pointer-events-auto flex items-center gap-2 px-3 py-2 md:px-4 bg-zinc-900/80 border border-white/10 rounded-full text-white hover:bg-zinc-800 transition-all font-medium"
-        >
+    <div className="relative w-full h-full flex flex-col overflow-y-auto">
+      <header className="dashboard-header">
+        <Link href="/" className="btn-back">
           <ArrowLeft className="w-4 h-4" />
-          <span className="text-xs md:text-sm">New Search</span>
+          <span>New Search</span>
         </Link>
 
-        <div className="pointer-events-auto px-3 py-2 md:px-4 bg-emerald-950/30 border border-emerald-500/20 rounded-full text-emerald-500 font-mono flex items-center gap-2">
-          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-breathe" />
-          <span className="text-[10px] md:text-xs">LIVE</span>
+        <div className="badge-live">
+          <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" />
+          <span>LIVE</span>
         </div>
       </header>
 
-      <div className="flex-1 flex items-center justify-center p-4 z-10 md:py-0">
+      <div className="dashboard-content">
         <div className="dashboard-card group">
           <div className="absolute top-0 left-0 w-full h-px bg-linear-to-r from-transparent via-zinc-700 to-transparent opacity-50" />
 
@@ -70,7 +82,6 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
 
             <div className="flight-icon-container group w-full md:w-auto">
               <div className="status-badge-pill">{status.text}</div>
-
               <div className="flight-icon-circle">{status.icon}</div>
 
               <div className="hidden md:block absolute top-1/2 left-full w-16 lg:w-24 h-px bg-zinc-800 -translate-y-1/2 ml-4" />
@@ -103,7 +114,9 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
 
             <StatBox label="V. Speed">
               <div
-                className={`flex items-center gap-1.5 font-mono font-medium truncate ${initialData.v_speed > 0 ? 'text-climb' : initialData.v_speed < 0 ? 'text-descend' : 'text-level'}`}
+                className={`flex items-center gap-1.5 font-mono font-medium truncate ${
+                  initialData.v_speed > 0 ? 'text-climb' : initialData.v_speed < 0 ? 'text-descend' : 'text-level'
+                }`}
               >
                 {initialData.v_speed > 0 ? (
                   <ArrowUpRight className="w-4 h-4" />
@@ -120,7 +133,7 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
               <span className="stat-value">{initialData.aircraft_icao || 'Unknown Type'}</span>
             </StatBox>
 
-            {/* <StatBox label="GPS Coordinates" className="wide row-layout">
+            <StatBox label="GPS Coordinates" className="wide row-layout">
               <div>
                 <span className="stat-label">Live Location</span>
                 <span className="stat-value text-sky-500 text-sm md:text-base">
@@ -128,15 +141,13 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
                 </span>
               </div>
               <MapIcon className="w-5 h-5 text-zinc-600 shrink-0 ml-2" />
-            </StatBox> */}
+            </StatBox>
           </div>
 
-          <div className="w-full h-72 md:h-96 rounded-3xl overflow-hidden border border-zinc-800 relative shadow-2xl mt-8">
-            <div className="absolute top-4 left-4 z-1 bg-[#121214]/80 backdrop-blur-md px-4 py-2 rounded-xl border border-white/10 pointer-events-none flex flex-col gap-1">
+          <div className="map-wrapper">
+            <div className="map-overlay-info">
               <div className="flex items-center gap-2">
-                <span
-                  className={`w-2 h-2 rounded-full animate-pulse ${status.text === 'CLIMBING' ? 'bg-emerald-500' : status.text === 'DESCENDING' ? 'bg-amber-500' : 'bg-sky-500'}`}
-                ></span>
+                <span className={`w-2 h-2 rounded-full ${status.dotColor} animate-pulse`} />
                 <span className="text-[10px] text-zinc-300 font-mono tracking-widest uppercase">Live Route</span>
               </div>
               <span className="text-xs text-white font-medium">
@@ -155,6 +166,10 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
               departure={departure}
               arrival={arrival}
             />
+          </div>
+
+          <div className="chart-wrapper">
+            <TelemetryChart initialData={initialData} />
           </div>
         </div>
       </div>

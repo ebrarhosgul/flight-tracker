@@ -9,6 +9,7 @@ interface PageProps {
 
 export default async function FlightPage({ params }: PageProps) {
   const { code } = await params;
+
   const flight = await getFlightData(code);
 
   if (!flight) {
@@ -21,7 +22,9 @@ export default async function FlightPage({ params }: PageProps) {
   ]);
 
   return (
-    <main className="h-full bg-[#09090b]">
+    <main className="flight-page-main">
+      <div className="tech-grid-overlay" />
+
       <FlightDashboard initialData={flight} departure={departureAirport} arrival={arrivalAirport} />
     </main>
   );
