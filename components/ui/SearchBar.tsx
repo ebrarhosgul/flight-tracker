@@ -66,7 +66,7 @@ export default function SearchBar() {
 
         <button
           type="submit"
-          disabled={isLoading || !query}
+          disabled={isLoading}
           className="search-btn"
           aria-label={isLoading ? 'Searching flight...' : 'Search Flight'}
         >
