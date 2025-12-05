@@ -7,14 +7,21 @@ export async function getAirportDetails(icaoCode: string): Promise<AirportRespon
   }
 
   const apiToken = process.env.AIRPORTDB_TOKEN;
-  if (!apiToken) return null;
+
+  if (!apiToken) {
+    return null;
+  }
 
   try {
+    console.log(`✈️ Fetching Airport: ${icaoCode}`);
+
     const res = await fetch(`https://airportdb.io/api/v1/airport/${icaoCode}?apiToken=${apiToken}`, {
       next: { revalidate: 86400 },
     });
 
-    if (!res.ok) return null;
+    if (!res.ok) {
+      return null;
+    }
 
     const data = await res.json();
 

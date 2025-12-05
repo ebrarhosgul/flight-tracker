@@ -8,7 +8,7 @@ export async function GET(request: Request) {
 
   if (code && !codeRegex.test(code)) {
     return NextResponse.json(
-      { error: 'Invalid flight code format. Use generic alphanumeric format (e.g., TK1920).' },
+      { error: 'Invalid flight code format. Use generic alphanumeric format (e.g., TK1923).' },
       { status: 400 }
     );
   }
@@ -38,8 +38,8 @@ export async function GET(request: Request) {
 
   try {
     let apiUrl = `https://airlabs.co/api/v9/flights?api_key=${API_KEY}`;
-    const fields = 'lat,lng,alt,dir,speed,flight_iata,flight_icao,dep_iata,arr_iata,status,aircraft_icao,airline_iata';
-
+    const fields =
+      'lat,lng,alt,dir,speed,v_speed,flight_iata,flight_icao,dep_iata,dep_icao,arr_iata,arr_icao,status,aircraft_icao,airline_iata';
     apiUrl += `&_fields=${fields}`;
 
     if (code) {
