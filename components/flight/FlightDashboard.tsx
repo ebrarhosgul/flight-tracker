@@ -176,7 +176,6 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
                   <span aria-label={`Longitude ${initialData.lng.toFixed(4)}`}>{initialData.lng.toFixed(4)}</span>
                 </span>
               </div>
-              <MapIcon className="w-5 h-5 text-zinc-600 shrink-0 ml-2" aria-hidden="true" />
             </StatBox>
           </div>
 
