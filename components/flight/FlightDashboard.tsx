@@ -1,7 +1,6 @@
 'use client';
 
 import { FlightData, AirportResponse, StatBoxProps } from '@/types';
-import Link from 'next/link';
 import {
   ArrowLeft,
   Plane,
@@ -13,6 +12,7 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
+import BackButton from '../ui/BackButton';
 
 interface Props {
   initialData: FlightData;
@@ -70,10 +70,7 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
   return (
     <div className="relative w-full h-full flex flex-col overflow-y-auto">
       <header className="dashboard-header">
-        <Link href="/" className="btn-back" aria-label="Go back to new search">
-          <ArrowLeft className="w-4 h-4" aria-hidden="true" />
-          <span>New Search</span>
-        </Link>
+        <BackButton />
 
         <div className="badge-live" role="status">
           <div className="w-1.5 h-1.5 rounded-full bg-emerald-500 animate-pulse" aria-hidden="true" />

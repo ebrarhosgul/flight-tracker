@@ -71,3 +71,8 @@ export interface ChartPoint {
   time: string;
   alt: number;
 }
+
+export interface BackButtonProps {
+  href?: string;
+  label?: string;
+}
