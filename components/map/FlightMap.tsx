@@ -53,7 +53,7 @@ export default function FlightMap({
         filter: drop-shadow(0 0 10px ${flightStatusColor});
         transition: transform 1s linear;
       ">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${flightStatusColor}" width="100%" height="100%">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="${flightStatusColor}" width="100%" height="100%" aria-hidden="true" focusable="false">
            <path d="M21,16v-2l-8-5V3.5c0-0.83-0.67-1.5-1.5-1.5S10,2.67,10,3.5V9l-8,5v2l8-2.5V19l-2,1.5V22l3.5-1l3.5,1v-1.5L13,19 v-5.5L21,16z"/>
         </svg>
       </div>
@@ -70,7 +70,7 @@ export default function FlightMap({
         className: 'airport-icon',
         html: `
       <div style="display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#10b981" width="28px" height="28px">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#10b981" width="28px" height="28px" aria-hidden="true" focusable="false">
           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
           <circle cx="12" cy="9" r="2.5" fill="#000" fill-opacity="0.2"/>
         </svg>
@@ -89,7 +89,7 @@ export default function FlightMap({
         className: 'airport-icon',
         html: `
       <div style="display: flex; align-items: center; justify-content: center; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.8));">
-        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ef4444" width="28px" height="28px">
+        <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="#ef4444" width="28px" height="28px" aria-hidden="true" focusable="false">
           <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
           <circle cx="12" cy="9" r="2.5" fill="#000" fill-opacity="0.2"/>
         </svg>
@@ -115,8 +115,8 @@ export default function FlightMap({
   }
 
   return (
-    <div className="map-container-wrapper">
-      <div className="map-legend-box">
+    <div className="map-container-wrapper" role="region" aria-label="Flight Tracking Map">
+      <div className="map-legend-box" aria-hidden="true">
         <div className="map-legend-header">
           <span className="map-legend-title">Route Map</span>
           <div className="legend-route-indicator">
@@ -148,17 +148,31 @@ export default function FlightMap({
         style={{ height: '100%', width: '100%', background: 'transparent' }}
         zoomControl={false}
         attributionControl={false}
+        keyboard={true}
       >
         <MapController lat={lat} lng={lng} />
 
         <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
 
         {routePositions.length > 1 && (
-          <Polyline positions={routePositions} color={flightStatusColor} weight={2} opacity={0.6} dashArray="6, 8" />
+          <Polyline
+            positions={routePositions}
+            color={flightStatusColor}
+            weight={2}
+            opacity={0.6}
+            dashArray="6, 8"
+            interactive={false}
+          />
         )}
 
         {departure?.latitude_deg && departure?.longitude_deg && (
-          <Marker position={[departure.latitude_deg, departure.longitude_deg]} icon={depIcon}>
+          <Marker
+            position={[departure.latitude_deg, departure.longitude_deg]}
+            icon={depIcon}
+            title={`Departure Airport: ${departure.name}`}
+            alt={`Departure Airport: ${departure.name}`}
+            keyboard={true}
+          >
             <Popup className="font-mono text-xs text-center">
               <strong className="text-emerald-600 block">DEPARTURE</strong>
               {departure.name}
@@ -167,7 +181,13 @@ export default function FlightMap({
         )}
 
         {arrival?.latitude_deg && arrival?.longitude_deg && (
-          <Marker position={[arrival.latitude_deg, arrival.longitude_deg]} icon={arrIcon}>
+          <Marker
+            position={[arrival.latitude_deg, arrival.longitude_deg]}
+            icon={arrIcon}
+            title={`Arrival Airport: ${arrival.name}`}
+            alt={`Arrival Airport: ${arrival.name}`}
+            keyboard={true}
+          >
             <Popup className="font-mono text-xs text-center">
               <strong className="text-red-600 block">ARRIVAL</strong>
               {arrival.name}
@@ -175,7 +195,14 @@ export default function FlightMap({
           </Marker>
         )}
 
-        <Marker position={[lat, lng]} icon={planeIcon}>
+        <Marker
+          position={[lat, lng]}
+          icon={planeIcon}
+          title={`Current Location of Flight ${flightCode}`}
+          alt={`Plane icon for flight ${flightCode}`}
+          keyboard={true}
+          zIndexOffset={1000}
+        >
           <Popup className="font-mono text-xs">
             <div className="text-center">
               <strong className="text-base block mb-1">{flightCode}</strong>

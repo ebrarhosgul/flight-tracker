@@ -85,20 +85,16 @@ body {
   @apply text-2xl font-mono font-bold text-white;
 }
 
-.stat-label {
-  @apply text-xs text-zinc-500 uppercase tracking-widest;
-}
-
 .app-footer {
   @apply w-full sm:min-h-7 text-center static my-5 py-3;
 }
 
 .footer-text {
-  @apply text-xs font-mono text-zinc-600 tracking-wider;
+  @apply text-xs font-mono text-zinc-400 tracking-wider;
 }
 
 .footer-name {
-  @apply text-zinc-400 font-bold;
+  @apply text-zinc-300 font-bold;
 }
 
 .search-wrapper {
@@ -133,7 +129,7 @@ body {
 }
 
 .airport-name {
-  @apply text-zinc-500 uppercase tracking-wider truncate block mt-1 text-[10px] md:text-xs max-w-[180px];
+  @apply text-zinc-400 uppercase tracking-wider truncate block mt-1 text-[10px] md:text-xs max-w-[180px];
 }
 
 .flight-icon-container {
@@ -168,7 +164,7 @@ body {
 }
 
 .stat-label {
-  @apply text-[9px] md:text-[10px] text-zinc-500 uppercase tracking-widest mb-1.5 block;
+  @apply text-[9px] md:text-[10px] text-zinc-400 uppercase tracking-widest mb-1.5 block text-xs;
 }
 
 .stat-value {
@@ -269,7 +265,7 @@ body {
 }
 
 .route-text-label {
-  @apply text-[9px] text-zinc-500 block;
+  @apply text-[9px] text-zinc-400 block;
 }
 
 .route-text-code-dep {
