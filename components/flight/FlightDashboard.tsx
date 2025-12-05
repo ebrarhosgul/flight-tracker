@@ -13,13 +13,21 @@ import {
   ArrowRight,
 } from 'lucide-react';
 import dynamic from 'next/dynamic';
-import TelemetryChart from '@/components/flight/TelemetryChart';
 
 interface Props {
   initialData: FlightData;
   departure: AirportResponse | null;
   arrival: AirportResponse | null;
 }
+
+const TelemetryChart = dynamic(() => import('@/components/flight/TelemetryChart'), {
+  ssr: false,
+  loading: () => (
+    <div className="w-full h-[200px] flex items-center justify-center bg-[#121214] border border-zinc-800 rounded-3xl">
+      <span className="text-zinc-600 font-mono text-xs tracking-widest animate-pulse">LOADING ALTITUDE CHART...</span>
+    </div>
+  ),
+});
 
 const FlightMap = dynamic(() => import('@/components/map/FlightMap'), {
   ssr: false,
