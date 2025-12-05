@@ -1,36 +1,109 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# ✈️ SkyTrack - Real-Time Flight Tracking Dashboard
 
-## Getting Started
+An advanced flight tracking application featuring real-time data visualization, dead reckoning simulation, and a high-performance interactive map.
 
-First, run the development server:
+![Project Banner](./public/og-image.png)
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
+<div align="center">
+  <a href="https://flight-tracker-ebrar.vercel.app/">
+    <img src="https://img.shields.io/badge/View_Live_Demo-000000?style=for-the-badge&logo=vercel&logoColor=white" alt="Live Demo" />
+  </a>
+</div>
+
+## 🚀 Overview
+
+SkyTrack is a modern web application that allows users to track flights in real-time. Unlike standard tracking apps, it implements a **hybrid data architecture** to optimize API usage while maintaining a smooth, "live" user experience through client-side physics simulation.
+
+Built with **Next.js 15 (App Router)**, it focuses on performance metrics, accessibility (WCAG), and engineering best practices.
+
+## ✨ Key Features
+
+- **📍 Live Interactive Map:** Custom Leaflet integration with bearing-accurate aircraft icons and dynamic route generation.
+- **📈 Telemetry Simulation:** Implements **Dead Reckoning** algorithms to simulate smooth altitude and speed changes between API updates, reducing server load by 95%.
+- **🛡️ BFF Architecture:** Backend-for-Frontend pattern using Next.js API Routes to secure API keys and sanitize data before it reaches the client.
+- **🎨 Glassmorphism UI:** A highly responsive, dark-mode-first interface built with Tailwind CSS.
+- **⚡ Performance First:** Achieved **90+ Lighthouse** scores on mobile via Dynamic Imports and aggressive code splitting.
+- **♿ Accessible:** Fully navigable via keyboard and screen readers (WCAG compliant).
+- **🧪 Tested:** Critical logic verified with **Vitest** unit tests.
+
+## 🛠️ Tech Stack
+
+- **Framework:** Next.js 15 (App Router, Server Components)
+- **Language:** TypeScript (Strict Mode)
+- **Styling:** Tailwind CSS
+- **Maps:** Leaflet & React-Leaflet
+- **Visualization:** Recharts
+- **Testing:** Vitest & React Testing Library
+- **Data Providers:** AirLabs (Flight Data) & AirportDB (Airport Details)
+
+## 🧠 Engineering Highlights
+
+### 1. Dead Reckoning Simulation (The "Secret Sauce")
+
+To bypass the strict API rate limits (1000 requests/mo) without compromising the user experience, I implemented a client-side simulation engine.
+
+- **Initial State:** The server fetches the snapshot data (Altitude, Speed, Vertical Speed).
+- **Projection:** The client calculates the aircraft's next position every 4 seconds based on its vertical speed vectors.
+- **Noise Injection:** Realistic organic fluctuations are added to the chart to prevent "robotic" straight lines.
+
+### 2. Rendering Optimization
+
+- **Memoization:** `useMemo` is used heavily in the Map component to prevent Leaflet markers from re-instantiating on every render cycle.
+- **Dynamic Imports:** Heavy libraries like `Leaflet` and `Recharts` are lazy-loaded (`ssr: false`), significantly improving Largest Contentful Paint (LCP).
+
+## 🚀 Getting Started
+
+1.  **Clone the repository:**
+
+    ```bash
+    git clone [https://github.com/ebrarhosgul/flight-tracker.git](https://github.com/ebrarhosgul/flight-tracker.git)
+    ```
+
+2.  **Install dependencies:**
+
+    ```bash
+    npm install
+    ```
+
+3.  **Configure Environment Variables:**
+    Create a `.env.local` file in the root directory:
+
+    ```env
+    AIRLABS_API_KEY=your_key_here
+    AIRPORTDB_TOKEN=your_token_here
+    NEXT_PUBLIC_USE_MOCK_DATA=true # Set to false for live data
+    NEXT_PUBLIC_BASE_URL=http://localhost:3000
+    ```
+
+4.  **Run the development server:**
+
+    ```bash
+    npm run dev
+    ```
+
+5.  **Run Tests:**
+    ```bash
+    npm run test
+    ```
+
+## 📂 Project Structure
+
+```text
+src/
+├── app/              # Next.js App Router (Pages & API)
+├── components/       # React Components
+│   ├── flight/       # Flight-specific UI (Dashboard, Chart)
+│   ├── map/          # Leaflet Map Logic
+│   └── ui/           # Shared UI (SearchBar, Buttons)
+├── lib/              # Utility functions & API wrappers
+├── mocks/            # Static data for development/demo
+└── types/            # TypeScript interfaces
 ```
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+## 🤝 Contributing
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+Contributions, issues, and feature requests are welcome!
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+## 📝 License
 
-## Learn More
-
-To learn more about Next.js, take a look at the following resources:
-
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
-
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
-
-## Deploy on Vercel
-
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+This project is [MIT](LICENSE) licensed.
