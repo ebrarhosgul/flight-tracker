@@ -15,7 +15,7 @@ const jetbrainsMono = JetBrains_Mono({
 });
 
 export const metadata: Metadata = {
-  title: 'Flight Tracker',
+  title: 'SkyTrack | Real-time Flight Tracker',
   description: 'Real-time flight tracking application',
 };
 
