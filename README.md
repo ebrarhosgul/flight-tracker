@@ -2,7 +2,9 @@
 
 An advanced flight tracking application featuring real-time data visualization, dead reckoning simulation, and a high-performance interactive map.
 
-![Project Banner](./public/og-image.png)
+<div align="center">
+  <img src="public/og-image.png" alt="SkyTrack Screenshot" width="60%">
+</div>
 
 <div align="center">
   <a href="https://flight-tracker-ebrar.vercel.app/">
