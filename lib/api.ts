@@ -12,7 +12,7 @@ export async function getFlightData(code: string): Promise<FlightData | null> {
 
     const json = await res.json();
 
-    return json.data && json.data[0] ? json.data[0] : null;
+    return json.data && json.data[0] ? { ...json.data[0], alt: Math.round((json.data[0].alt || 0) * 3.28084) } : null;
   } catch (error) {
     console.error('Fetch Error:', error);
 
