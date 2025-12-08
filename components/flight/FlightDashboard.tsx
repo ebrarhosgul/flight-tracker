@@ -1,5 +1,6 @@
 'use client';
 
+import { useState, useEffect } from 'react';
 import { FlightData, AirportResponse, StatBoxProps } from '@/types';
 import {
   ArrowLeft,
@@ -38,9 +39,68 @@ const FlightMap = dynamic(() => import('@/components/map/FlightMap'), {
   ),
 });
 
+const getDistanceFromLatLonInKm = (lat1: number, lon1: number, lat2: number, lon2: number) => {
+  const R = 6371;
+  const dLat = ((lat2 - lat1) * Math.PI) / 180;
+  const dLon = ((lon2 - lon1) * Math.PI) / 180;
+  const a =
+    Math.sin(dLat / 2) * Math.sin(dLat / 2) +
+    Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
+  const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
+
+  return R * c;
+};
+
+const getSmartVerticalSpeed = (flight: any, departure: any, arrival: any) => {
+  if (flight.v_speed !== undefined && flight.v_speed !== null && flight.v_speed !== 0) {
+    return Math.round(flight.v_speed * 196.85);
+  }
+
+  return null;
+};
+
+const calculateSimulatedSpeed = (flight: any, departure: any, arrival: any) => {
+  const currentAltMeters = flight.alt;
+  const LOW_ALTITUDE_LIMIT = 4000;
+  const NEAR_AIRPORT_LIMIT = 150;
+
+  if (departure?.latitude_deg && departure?.longitude_deg) {
+    const distToDep = getDistanceFromLatLonInKm(
+      flight.lat,
+      flight.lng,
+      departure.latitude_deg,
+      departure.longitude_deg
+    );
+    if (distToDep < NEAR_AIRPORT_LIMIT && currentAltMeters < LOW_ALTITUDE_LIMIT) {
+      return 1800 + Math.floor(Math.random() * 1200);
+    }
+  }
+
+  if (arrival?.latitude_deg && arrival?.longitude_deg) {
+    const distToArr = getDistanceFromLatLonInKm(flight.lat, flight.lng, arrival.latitude_deg, arrival.longitude_deg);
+    if (distToArr < NEAR_AIRPORT_LIMIT && currentAltMeters < LOW_ALTITUDE_LIMIT) {
+      return -1 * (1000 + Math.floor(Math.random() * 1000));
+    }
+  }
+
+  return Math.floor(Math.random() * 80) - 40;
+};
+
 export default function FlightDashboard({ initialData, departure, arrival }: Props) {
+  const [vSpeed, setVSpeed] = useState(0);
+
+  useEffect(() => {
+    const realSpeed = getSmartVerticalSpeed(initialData, departure, arrival);
+
+    if (realSpeed !== null) {
+      setVSpeed(realSpeed);
+    } else {
+      setVSpeed(calculateSimulatedSpeed(initialData, departure, arrival));
+    }
+  }, [initialData, departure, arrival]);
+
   const getFlightStatus = () => {
-    const vs = initialData.v_speed;
+    const vs = vSpeed;
 
     if (vs > 50) {
       return {
@@ -63,13 +123,6 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
       text: 'CRUISING',
       dotColor: 'bg-sky-500',
     };
-  };
-
-  const formatVerticalSpeed = (speedInMs: number) => {
-    const speedInFpm = Math.round(speedInMs * 196.85);
-    const sign = speedInFpm > 0 ? '+' : '';
-
-    return `${sign}${speedInFpm}`;
   };
 
   const status = getFlightStatus();
@@ -151,19 +204,19 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
               <div
                 role="img"
                 className={`flex items-center gap-1.5 font-mono font-medium truncate ${
-                  initialData.v_speed > 0 ? 'text-climb' : initialData.v_speed < 0 ? 'text-descend' : 'text-level'
+                  vSpeed > 0 ? 'text-climb' : vSpeed < 0 ? 'text-descend' : 'text-level'
                 }`}
-                aria-label={`${formatVerticalSpeed(initialData.v_speed)} feet per minute, ${initialData.v_speed > 0 ? 'Climbing' : initialData.v_speed < 0 ? 'Descending' : 'Level flight'}`}
+                aria-label={`${vSpeed} feet per minute, ${vSpeed > 0 ? 'Climbing' : vSpeed < 0 ? 'Descending' : 'Level flight'}`}
               >
-                {initialData.v_speed > 0 ? (
+                {vSpeed > 0 ? (
                   <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
-                ) : initialData.v_speed < 0 ? (
+                ) : vSpeed < 0 ? (
                   <ArrowDownRight className="w-4 h-4" aria-hidden="true" />
                 ) : (
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 )}
                 <span className="text-lg md:text-xl" aria-hidden="true">
-                  {formatVerticalSpeed(initialData.v_speed)} <span className="text-sm text-zinc-400">fpm</span>
+                  {vSpeed} <span className="text-sm text-zinc-400">fpm</span>
                 </span>
               </div>
             </StatBox>
