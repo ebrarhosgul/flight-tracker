@@ -65,6 +65,13 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
     };
   };
 
+  const formatVerticalSpeed = (speedInMs: number) => {
+    const speedInFpm = Math.round(speedInMs * 196.85);
+    const sign = speedInFpm > 0 ? '+' : '';
+
+    return `${sign}${speedInFpm}`;
+  };
+
   const status = getFlightStatus();
 
   return (
@@ -146,7 +153,7 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
                 className={`flex items-center gap-1.5 font-mono font-medium truncate ${
                   initialData.v_speed > 0 ? 'text-climb' : initialData.v_speed < 0 ? 'text-descend' : 'text-level'
                 }`}
-                aria-label={`${initialData.v_speed} feet per minute, ${initialData.v_speed > 0 ? 'Climbing' : initialData.v_speed < 0 ? 'Descending' : 'Level flight'}`}
+                aria-label={`${formatVerticalSpeed(initialData.v_speed)} feet per minute, ${initialData.v_speed > 0 ? 'Climbing' : initialData.v_speed < 0 ? 'Descending' : 'Level flight'}`}
               >
                 {initialData.v_speed > 0 ? (
                   <ArrowUpRight className="w-4 h-4" aria-hidden="true" />
@@ -156,7 +163,7 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
                   <ArrowRight className="w-4 h-4" aria-hidden="true" />
                 )}
                 <span className="text-lg md:text-xl" aria-hidden="true">
-                  {initialData.v_speed}
+                  {formatVerticalSpeed(initialData.v_speed)} <span className="text-sm text-zinc-400">fpm</span>
                 </span>
               </div>
             </StatBox>
