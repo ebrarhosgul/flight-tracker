@@ -14,9 +14,9 @@ An advanced flight tracking application featuring real-time data visualization, 
 
 ## 🚀 Overview
 
-SkyTrack is a modern web application that allows users to track flights in real-time. Unlike standard tracking apps, it implements a **hybrid data architecture** to optimize API usage while maintaining a smooth, "live" user experience through client-side physics simulation.
+SkyTrack is a modern web application that allows users to track flights in real-time. Unlike standard tracking apps, it focuses on real-time data visualization by integrating an interactive map with live-updating charts. It efficiently manages state to display dynamic altitude and speed metrics for selected flights.
 
-Built with **Next.js 15 (App Router)**, it focuses on performance metrics, accessibility (WCAG), and engineering best practices.
+Built with **Next.js 16 (App Router)**, it focuses on performance metrics, accessibility (WCAG), and engineering best practices.
 
 ## ✨ Key Features
 
@@ -30,7 +30,7 @@ Built with **Next.js 15 (App Router)**, it focuses on performance metrics, acces
 
 ## 🛠️ Tech Stack
 
-- **Framework:** Next.js 15 (App Router, Server Components)
+- **Framework:** Next.js 16 (App Router, Server Components)
 - **Language:** TypeScript (Strict Mode)
 - **Styling:** Tailwind CSS
 - **Maps:** Leaflet & React-Leaflet
