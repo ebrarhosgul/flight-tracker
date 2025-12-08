@@ -15,6 +15,50 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
+const getGeodesicPath = (start: { lat: number; lng: number }, end: { lat: number; lng: number }) => {
+  const points: [number, number][] = [];
+  const numPoints = 100;
+
+  const lat1 = (start.lat * Math.PI) / 180;
+  const lon1 = (start.lng * Math.PI) / 180;
+  const lat2 = (end.lat * Math.PI) / 180;
+  const lon2 = (end.lng * Math.PI) / 180;
+
+  const d =
+    2 *
+    Math.asin(
+      Math.sqrt(
+        Math.pow(Math.sin((lat1 - lat2) / 2), 2) +
+          Math.cos(lat1) * Math.cos(lat2) * Math.pow(Math.sin((lon1 - lon2) / 2), 2)
+      )
+    );
+
+  for (let i = 0; i <= numPoints; i++) {
+    const f = (1 / numPoints) * i;
+    const A = Math.sin((1 - f) * d) / Math.sin(d);
+    const B = Math.sin(f * d) / Math.sin(d);
+
+    const x = A * Math.cos(lat1) * Math.cos(lon1) + B * Math.cos(lat2) * Math.cos(lon2);
+    const y = A * Math.cos(lat1) * Math.sin(lon1) + B * Math.cos(lat2) * Math.sin(lon2);
+    const z = A * Math.sin(lat1) + B * Math.sin(lat2);
+
+    const lat = Math.atan2(z, Math.sqrt(Math.pow(x, 2) + Math.pow(y, 2)));
+    const lon = Math.atan2(y, x);
+
+    let latDeg = (lat * 180) / Math.PI;
+    let lonDeg = (lon * 180) / Math.PI;
+
+    if (points.length > 0) {
+      const prevLon = points[points.length - 1][1];
+      if (lonDeg - prevLon > 180) lonDeg -= 360;
+      else if (prevLon - lonDeg > 180) lonDeg += 360;
+    }
+
+    points.push([latDeg, lonDeg]);
+  }
+  return points;
+};
+
 const MapController = ({ lat, lng }: { lat: number; lng: number }) => {
   const map = useMap();
 
@@ -102,17 +146,16 @@ export default function FlightMap({
     []
   );
 
-  const routePositions: L.LatLngExpression[] = [];
+  const routePositions: L.LatLngExpression[] = useMemo(() => {
+    if (!departure?.latitude_deg || !arrival?.latitude_deg) {
+      return [];
+    }
 
-  if (departure?.latitude_deg && departure?.longitude_deg) {
-    routePositions.push([departure.latitude_deg, departure.longitude_deg]);
-  }
+    const segment1 = getGeodesicPath({ lat: departure.latitude_deg, lng: departure.longitude_deg }, { lat, lng });
+    const segment2 = getGeodesicPath({ lat, lng }, { lat: arrival.latitude_deg, lng: arrival.longitude_deg });
 
-  routePositions.push([lat, lng]);
-
-  if (arrival?.latitude_deg && arrival?.longitude_deg) {
-    routePositions.push([arrival.latitude_deg, arrival.longitude_deg]);
-  }
+    return [...segment1, ...segment2];
+  }, [departure, arrival, lat, lng]);
 
   return (
     <div className="map-container-wrapper" role="region" aria-label="Flight Tracking Map">
@@ -149,10 +192,11 @@ export default function FlightMap({
         zoomControl={false}
         attributionControl={false}
         keyboard={true}
+        worldCopyJump={true}
       >
         <MapController lat={lat} lng={lng} />
 
-        <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" />
+        <TileLayer url="https://{s}.basemaps.cartocdn.com/dark_all/{z}/{x}/{y}{r}.png" noWrap={false} />
 
         {routePositions.length > 1 && (
           <Polyline
@@ -170,8 +214,6 @@ export default function FlightMap({
             position={[departure.latitude_deg, departure.longitude_deg]}
             icon={depIcon}
             title={`Departure Airport: ${departure.name}`}
-            alt={`Departure Airport: ${departure.name}`}
-            keyboard={true}
           >
             <Popup className="font-mono text-xs text-center">
               <strong className="text-emerald-600 block">DEPARTURE</strong>
@@ -185,8 +227,6 @@ export default function FlightMap({
             position={[arrival.latitude_deg, arrival.longitude_deg]}
             icon={arrIcon}
             title={`Arrival Airport: ${arrival.name}`}
-            alt={`Arrival Airport: ${arrival.name}`}
-            keyboard={true}
           >
             <Popup className="font-mono text-xs text-center">
               <strong className="text-red-600 block">ARRIVAL</strong>
@@ -195,14 +235,7 @@ export default function FlightMap({
           </Marker>
         )}
 
-        <Marker
-          position={[lat, lng]}
-          icon={planeIcon}
-          title={`Current Location of Flight ${flightCode}`}
-          alt={`Plane icon for flight ${flightCode}`}
-          keyboard={true}
-          zIndexOffset={1000}
-        >
+        <Marker position={[lat, lng]} icon={planeIcon} zIndexOffset={1000}>
           <Popup className="font-mono text-xs">
             <div className="text-center">
               <strong className="text-base block mb-1">{flightCode}</strong>
