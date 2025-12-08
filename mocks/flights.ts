@@ -1,4 +1,4 @@
-export const mockFlights = [
+export const MOCK_FLIGHTS = [
   {
     hex: '4b1820',
     reg_number: 'TC-JHV',
