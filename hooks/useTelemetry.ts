@@ -1,12 +1,12 @@
 import { useState, useEffect, useRef } from 'react';
 import { FlightData, ChartPoint } from '@/types';
-import { REFRESH_RATE_MS, HISTORY_POINTS_COUNT } from '@/lib/constants';
+import { REFRESH_RATE_MS, HISTORY_POINTS_COUNT, MS_TO_FEET } from '@/lib/constants';
 
 export const useTelemetry = (initialData: FlightData) => {
   const [history, setHistory] = useState<ChartPoint[]>([]);
   const currentAlt = useRef(initialData.alt);
 
-  const vSpeedPerTick = (initialData.v_speed || 0) * (REFRESH_RATE_MS / 60000);
+  const vSpeedPerTick = (initialData.v_speed || 0) * MS_TO_FEET * (REFRESH_RATE_MS / 1000);
   const isCruising = Math.abs(initialData.v_speed) < 100;
 
   useEffect(() => {

@@ -2,18 +2,10 @@
 
 import { useState, useEffect } from 'react';
 import { FlightData, AirportResponse, StatBoxProps } from '@/types';
-import {
-  ArrowLeft,
-  Plane,
-  PlaneTakeoff,
-  PlaneLanding,
-  Map as MapIcon,
-  ArrowUpRight,
-  ArrowDownRight,
-  ArrowRight,
-} from 'lucide-react';
+import { Plane, PlaneTakeoff, PlaneLanding, ArrowUpRight, ArrowDownRight, ArrowRight } from 'lucide-react';
 import dynamic from 'next/dynamic';
 import BackButton from '../ui/BackButton';
+import { EARTH_RADIUS_KM, MS_TO_FPM, NEAR_AIRPORT_DISTANCE_KM, LOW_ALTITUDE_THRESHOLD_FT } from '@/lib/constants';
 
 interface Props {
   initialData: FlightData;
@@ -40,7 +32,6 @@ const FlightMap = dynamic(() => import('@/components/map/FlightMap'), {
 });
 
 const getDistanceFromLatLonInKm = (lat1: number, lon1: number, lat2: number, lon2: number) => {
-  const R = 6371;
   const dLat = ((lat2 - lat1) * Math.PI) / 180;
   const dLon = ((lon2 - lon1) * Math.PI) / 180;
   const a =
@@ -48,21 +39,23 @@ const getDistanceFromLatLonInKm = (lat1: number, lon1: number, lat2: number, lon
     Math.cos((lat1 * Math.PI) / 180) * Math.cos((lat2 * Math.PI) / 180) * Math.sin(dLon / 2) * Math.sin(dLon / 2);
   const c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1 - a));
 
-  return R * c;
+  return EARTH_RADIUS_KM * c;
 };
 
-const getSmartVerticalSpeed = (flight: any, departure: any, arrival: any) => {
+const getSmartVerticalSpeed = (flight: FlightData) => {
   if (flight.v_speed !== undefined && flight.v_speed !== null && flight.v_speed !== 0) {
-    return Math.round(flight.v_speed * 196.85);
+    return Math.round(flight.v_speed * MS_TO_FPM);
   }
 
   return null;
 };
 
-const calculateSimulatedSpeed = (flight: any, departure: any, arrival: any) => {
-  const currentAltMeters = flight.alt;
-  const LOW_ALTITUDE_LIMIT = 4000;
-  const NEAR_AIRPORT_LIMIT = 150;
+const calculateSimulatedSpeed = (
+  flight: FlightData,
+  departure: AirportResponse | null,
+  arrival: AirportResponse | null
+) => {
+  const currentAltFt = flight.alt;
 
   if (departure?.latitude_deg && departure?.longitude_deg) {
     const distToDep = getDistanceFromLatLonInKm(
@@ -71,14 +64,16 @@ const calculateSimulatedSpeed = (flight: any, departure: any, arrival: any) => {
       departure.latitude_deg,
       departure.longitude_deg
     );
-    if (distToDep < NEAR_AIRPORT_LIMIT && currentAltMeters < LOW_ALTITUDE_LIMIT) {
+
+    if (distToDep < NEAR_AIRPORT_DISTANCE_KM && currentAltFt < LOW_ALTITUDE_THRESHOLD_FT) {
       return 1800 + Math.floor(Math.random() * 1200);
     }
   }
 
   if (arrival?.latitude_deg && arrival?.longitude_deg) {
     const distToArr = getDistanceFromLatLonInKm(flight.lat, flight.lng, arrival.latitude_deg, arrival.longitude_deg);
-    if (distToArr < NEAR_AIRPORT_LIMIT && currentAltMeters < LOW_ALTITUDE_LIMIT) {
+
+    if (distToArr < NEAR_AIRPORT_DISTANCE_KM && currentAltFt < LOW_ALTITUDE_THRESHOLD_FT) {
       return -1 * (1000 + Math.floor(Math.random() * 1000));
     }
   }
@@ -90,7 +85,7 @@ export default function FlightDashboard({ initialData, departure, arrival }: Pro
   const [vSpeed, setVSpeed] = useState(0);
 
   useEffect(() => {
-    const realSpeed = getSmartVerticalSpeed(initialData, departure, arrival);
+    const realSpeed = getSmartVerticalSpeed(initialData);
 
     if (realSpeed !== null) {
       setVSpeed(realSpeed);
