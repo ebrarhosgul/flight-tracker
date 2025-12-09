@@ -1,75 +1,19 @@
 'use client';
 
-import { useEffect, useState, useRef, memo } from 'react';
+import { memo } from 'react';
 import { AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import { FlightData, ChartPoint } from '@/types';
+import { FlightData } from '@/types';
+import { useTelemetry } from '@/hooks/useTelemetry';
 
 interface Props {
   initialData: FlightData;
 }
 
-const REFRESH_RATE = 4000;
-const HISTORY_POINTS = 30;
-
 const TelemetryChart = ({ initialData }: Props) => {
-  const [data, setData] = useState<ChartPoint[]>([]);
-  const currentAlt = useRef(initialData.alt);
+  const { history, isCruising } = useTelemetry(initialData);
 
-  const vSpeedPerTick = (initialData.v_speed || 0) * (REFRESH_RATE / 60000);
-  const isCruising = Math.abs(initialData.v_speed) < 100;
-
-  useEffect(() => {
-    const initialHistory: ChartPoint[] = [];
-    const now = new Date();
-
-    for (let i = HISTORY_POINTS; i >= 0; i--) {
-      const t = new Date(now.getTime() - i * REFRESH_RATE);
-
-      const timeStr = t.toLocaleTimeString(undefined, {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      });
-
-      const noise = isCruising ? Math.random() * 2 - 1 : Math.random() * 10 - 5;
-      const simulatedAlt = currentAlt.current - vSpeedPerTick * i + noise;
-
-      initialHistory.push({
-        time: timeStr,
-        alt: Math.max(0, Math.round(simulatedAlt)),
-      });
-    }
-    setData(initialHistory);
-
-    const interval = setInterval(() => {
-      const now = new Date();
-
-      const timeStr = now.toLocaleTimeString(undefined, {
-        hour: '2-digit',
-        minute: '2-digit',
-        second: '2-digit',
-      });
-
-      const noise = isCruising ? Math.random() * 2 - 1 : Math.random() * 10 - 5;
-      currentAlt.current = currentAlt.current + vSpeedPerTick + noise;
-
-      const newPoint: ChartPoint = {
-        time: timeStr,
-        alt: Math.max(0, Math.round(currentAlt.current)),
-      };
-
-      setData((prevData) => {
-        const newData = [...prevData.slice(1), newPoint];
-
-        return newData;
-      });
-    }, REFRESH_RATE);
-
-    return () => clearInterval(interval);
-  }, [initialData.alt, vSpeedPerTick, isCruising]);
-
-  const minAlt = Math.min(...data.map((d) => d.alt));
-  const maxAlt = Math.max(...data.map((d) => d.alt));
+  const minAlt = Math.min(...history.map((d) => d.alt));
+  const maxAlt = Math.max(...history.map((d) => d.alt));
   const padding = isCruising ? 50 : 200;
 
   return (
@@ -91,7 +35,7 @@ const TelemetryChart = ({ initialData }: Props) => {
 
       <div className="telemetry-chart-area">
         <ResponsiveContainer width="100%" height="100%">
-          <AreaChart data={data} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
+          <AreaChart data={history} margin={{ top: 5, right: 10, left: -20, bottom: 0 }}>
             <defs>
               <linearGradient id="colorAlt" x1="0" y1="0" x2="0" y2="1">
                 <stop offset="5%" stopColor="#0ea5e9" stopOpacity={0.2} />
